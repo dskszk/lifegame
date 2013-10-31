@@ -1,4 +1,4 @@
 lifegame
 ========
 
-Conway's Life of Game
+An implementation of the Conway's game of life
