@@ -64,18 +64,16 @@ static gboolean life_game_timeout (gpointer);
 
 /* Boilerplate code */
 
-static void
+    static void
 life_game_class_init (LifeGameClass *klass)
 {
     g_type_class_add_private (klass, sizeof (LifeGamePrivate));
 }
 
-static void
+    static void
 life_game_init (LifeGame *self)
 {
     LifeGamePrivate *priv;
-    GRand *ran;
-    gint i, ri;
     self->priv = priv = LIFE_GAME_GET_PRIVATE (self);
     /* Initialize everything */
     priv->area = gtk_drawing_area_new ();
@@ -124,9 +122,9 @@ life_game_init (LifeGame *self)
     gtk_widget_show_all (GTK_WIDGET (self));
 }
 
-G_DEFINE_TYPE (LifeGame, life_game, GTK_TYPE_WINDOW);
+G_DEFINE_TYPE (LifeGame, life_game, GTK_TYPE_WINDOW)
 
-LifeGame
+    LifeGame
 *life_game_new ()
 {
     return LIFE_GAME (g_object_new (LIFE_TYPE_GAME, NULL));
@@ -134,13 +132,13 @@ LifeGame
 
 /* Callback functions */
 
-static void
+    static void
 life_game_on_random_clicked (GtkButton *button, gpointer data)
 {
     life_game_cell_randomize (data);
 }
 
-static void
+    static void
 life_game_on_reset_clicked (GtkButton *button, gpointer data)
 {
     GtkWidget *rand = (LIFE_GAME (data))->priv->random;
@@ -148,7 +146,7 @@ life_game_on_reset_clicked (GtkButton *button, gpointer data)
     life_game_cell_initialize (data);
 }
 
-static void
+    static void
 life_game_on_auto_step_toggled (GtkToggleButton *tbutton, gpointer data)
 {
     LifeGame *self = LIFE_GAME (data);
@@ -170,7 +168,7 @@ life_game_on_auto_step_toggled (GtkToggleButton *tbutton, gpointer data)
     }
 }
 
-static void
+    static void
 life_game_on_next_clicked (GtkButton *button, gpointer data)
 {
     LifeGame *self = LIFE_GAME (data);
@@ -180,7 +178,7 @@ life_game_on_next_clicked (GtkButton *button, gpointer data)
     life_game_next_step (data);
 }
 
-static void
+    static void
 life_game_on_area_draw (GtkWidget *area, cairo_t *cr, gpointer data)
 {
     gint i, j;
@@ -188,17 +186,19 @@ life_game_on_area_draw (GtkWidget *area, cairo_t *cr, gpointer data)
     LifeGame *self = LIFE_GAME (data);
     gint max = self->priv->max;
     gboolean *cell_data = self->priv->cell_data;
-    for (i = 1; i < max - 1; i++)
-        for (j = 1; j < max - 1; j++)
+    for (i = 1; i < max - 1; i++) {
+        for (j = 1; j < max - 1; j++) {
             if (cell_data[i * max + j]) {
                 cairo_rectangle (cr, 5 * (j - 1), 5 * (i - 1), 5, 5);
                 cairo_fill (cr);
             }
+        }
+    }
     g_sprintf (str, "Generation: %u", self->priv->gen);
     gtk_label_set_text (GTK_LABEL (self->priv->label), str);
 }
 
-static gboolean
+    static gboolean
 life_game_on_area_event (GtkWidget *area, GdkEvent *event, gpointer data)
 {
     LifeGame *self = LIFE_GAME (data);
@@ -213,35 +213,39 @@ life_game_on_area_event (GtkWidget *area, GdkEvent *event, gpointer data)
             gtk_widget_queue_draw_area (self->priv->area, 0, 0, 500, 500);
         }
     }
+    return TRUE;
 }
 
 /* Utils (private) */
 
-static void
+    static void
 life_game_cell_initialize (LifeGame *self)
 {
-    gint i, j;
+    gint i;
     gint max = self->priv->max;
-    for (i = 0; i < max * max; i++)
+    for (i = 0; i < max * max; i++) {
         self->priv->cell_data[i] = FALSE;
+    }
     self->priv->gen = 0;
     gtk_widget_queue_draw_area (self->priv->area, 0, 0, 500, 500);
 }
 
-static void
+    static void
 life_game_cell_randomize (LifeGame *self)
 {
-    gint i, j, ri;
+    gint i, ri;
     GRand *ran = g_rand_new ();
     gint max = self->priv->max;
     gboolean *cell_data = self->priv->cell_data;
     gint rmax = g_rand_int_range (ran, 0, max * max / 8);
-    for (i = 0; i < max * max; i++)
+    for (i = 0; i < max * max; i++) {
         cell_data[i] = FALSE;
+    }
     for (i = 0; i < rmax; i++) {
         ri = g_rand_int_range (ran, 0, max * max / 4);
-        if (ri >= max / 2)
+        if (ri >= max / 2) {
             ri = ri % (max / 2) + (ri / max * 2) * max;
+        }
         cell_data[ri] = !cell_data[ri];
     }
     life_game_next_step (self);
@@ -249,27 +253,29 @@ life_game_cell_randomize (LifeGame *self)
     gtk_widget_queue_draw_area (self->priv->area, 0, 0, 500, 500);
 }
 
-static gboolean
+    static gboolean
 life_game_timeout (gpointer data)
 {
     LifeGame *self = LIFE_GAME (data);
     gboolean timeout_state = self->priv->timeout_state;
-    if (timeout_state)
+    if (timeout_state) {
         life_game_next_step (data);
+    }
     return timeout_state;
 }
 
-static void
+    static void
 life_game_next_step (LifeGame *self)
 {
     gint i, j;
-    gchar str[16];
     gboolean *cell_data = self->priv->cell_data;
     gint *count = self->priv->count;
     gint max = self->priv->max;
-    for (i = 0; i < max; i++)
-        for (j = 0; j < max; j++)
+    for (i = 0; i < max; i++) {
+        for (j = 0; j < max; j++) {
             count[i * max + j] = 0;
+        }
+    }
     for (i = 1; i < max - 1; i++) {
         for (j = 1; j < max - 1; j++) {
             if (cell_data[i * max + j]) {
@@ -294,13 +300,15 @@ life_game_next_step (LifeGame *self)
     count[max * (max - 1) - 2] += count[0];
     count[2 * max - 2] += count[max * (max - 1)];
     count[max * (max - 1) + 1] += count[max - 1];
-    for (i = 1; i < max - 1; i++)
-        for (j = 1; j < max - 1; j++)
+    for (i = 1; i < max - 1; i++) {
+        for (j = 1; j < max - 1; j++) {
             if (cell_data[i * max + j]) {
                 if (count[i * max + j] != 2 && count[i * max + j] != 3)
                     cell_data[i * max + j] = FALSE;
             } else if (count[i * max + j] == 3)
                 cell_data[i * max + j] = TRUE;
+        }
+    }
     self->priv->gen++;
     gtk_widget_queue_draw_area (self->priv->area, 0, 0, 500, 500);
 }

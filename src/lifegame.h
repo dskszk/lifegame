@@ -19,7 +19,12 @@
 #ifndef LIFE_GAME_H
 #define LIFE_GAME_H
 
+#include <glib/gprintf.h>
 #include <gtk/gtk.h>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #define LIFE_TYPE_GAME	(life_game_get_type ())
 #define LIFE_IS_GAME(obj)	(G_TYPE_CHECK_INSTANCE_TYPE ((obj), LIFE_TYPE_GAME))

@@ -18,7 +18,7 @@
 
 #include "lifegame.h"
 
-int
+    int
 main (int argc, char *argv[])
 {
     LifeGame *lg;
