@@ -303,10 +303,12 @@ life_game_next_step (LifeGame *self)
     for (i = 1; i < max - 1; i++) {
         for (j = 1; j < max - 1; j++) {
             if (cell_data[i * max + j]) {
-                if (count[i * max + j] != 2 && count[i * max + j] != 3)
+                if (count[i * max + j] != 2 && count[i * max + j] != 3) {
                     cell_data[i * max + j] = FALSE;
-            } else if (count[i * max + j] == 3)
+                }
+            } else if (count[i * max + j] == 3) {
                 cell_data[i * max + j] = TRUE;
+            }
         }
     }
     self->priv->gen++;
